@@ -1,0 +1,59 @@
+.navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navBarList {
+    float: right;
+    margin-left: 10px;
+}
+
+.applyLeaves {
+    justify-content: center;
+    display: flex;
+    font-size: 35px;
+    margin-top: 20px;
+}
+
+.leavesCount {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}
+
+.registrationForm {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.dates {
+    justify-content: center;
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.messageBox {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}
+
+.textarea {
+    width: 450px;
+    height: 250px;
+}
+
+.attachments {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}
+
+.submitBtn {
+    margin-top: 20px;
+    width: 70px;
+    height: 30px;
+}

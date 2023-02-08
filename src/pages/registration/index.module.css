@@ -1,0 +1,31 @@
+.registration {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.registrationForm {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.formFields {
+    margin-top: 10px;
+}
+
+.submitBtn {
+    margin-top: 20px;
+    width: 70px;
+    height: 30px;
+}
+
+.bottomText {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.loginText {
+    text-decoration: underline;
+    cursor: pointer;
+}

@@ -1,0 +1,11 @@
+.navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navBarList {
+    float: right;
+    margin-left: 10px;
+}

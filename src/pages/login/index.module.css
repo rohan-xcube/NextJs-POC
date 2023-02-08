@@ -1,0 +1,31 @@
+.login {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.loginForm {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.formFields { 
+    margin-top: 10px;
+}
+
+.loginBtn {
+    margin-top: 20px;
+    width: 70px;
+    height: 30px;
+}
+
+.bottomText {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.signupText {
+    text-decoration: underline;
+    cursor: pointer;
+}
