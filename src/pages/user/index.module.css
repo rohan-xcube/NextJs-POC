@@ -17,7 +17,21 @@
     margin-top: 20px;
 }
 
-.leavesCount {
+.leaveAccepted {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+    color: green;
+}
+
+.leaveRejected {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+    color: red;
+}
+
+.noPending {
     justify-content: center;
     display: flex;
     margin-top: 15px;

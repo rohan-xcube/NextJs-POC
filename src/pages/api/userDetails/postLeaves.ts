@@ -19,8 +19,6 @@ connect();
     }
   } 
   catch (error) {
-    console.log(error, 'error');
-    
     res.status(400).json({ status: 'data not submitted' })
   }
 

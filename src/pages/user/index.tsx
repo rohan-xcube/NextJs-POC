@@ -12,10 +12,27 @@ const User = () => {
         message: '',
         attachmentFileObject: null
     })
+    const [leaveConfirmation, setLeaveConfirmation] = useState<any>({})
 
     useEffect(() => {
         setUserData(getFromStorage('USER_DATA'))
     }, [])
+
+    useEffect(() => {
+        fetchData();
+    }, [userData])
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/userDetails/getLeavesConfirmation?user_email=${userData.email}`, {
+                method: 'GET'
+            });
+            const json = await response.json();
+            setLeaveConfirmation(json.leavesData)
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
 
     const logoutBtn = () => {
         removeFromStorage('USER_DATA')
@@ -39,7 +56,7 @@ const User = () => {
         e.preventDefault()
         const response = await fetch(`http://localhost:3000/api/userDetails/postLeaves`, {
             method: 'POST',
-            body: JSON.stringify({ userLeaveData: {...userLeaveData, firstName: userData.firstName, lastName: userData.lastName, email: userData.email} }),
+            body: JSON.stringify({ userLeaveData: { ...userLeaveData, firstName: userData.firstName, lastName: userData.lastName, email: userData.email } }),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -47,6 +64,23 @@ const User = () => {
         const data = await response.json()
         console.log(data, 'data');
     }
+
+    const leaveRequestStatus = () => {
+        if (leaveConfirmation?.leaveConfirmation === 'accepted') {
+            return (
+                <div className={styles.leaveAccepted}>your leave requested is accepted</div>
+            )
+        } else if (leaveConfirmation?.leaveConfirmation === 'declined') {
+            return (
+                <div className={styles.leaveRejected}>your leave requested is rejected</div>
+            )
+        } else if (!leaveConfirmation) {
+            return (
+                <div className={styles.noPending}>you dont have any pending leave requests</div>
+            )
+        }
+    }
+
 
     return (
         <>
@@ -62,9 +96,8 @@ const User = () => {
                 Apply Leaves
             </div>
 
-            <div className={styles.leavesCount}>
-                number of leaves present - 20
-            </div>
+            {leaveRequestStatus()}
+
             <form onSubmit={submitDetails} className={styles.registrationForm}>
                 <div className={styles.dates}>
                     <label>From Date</label>

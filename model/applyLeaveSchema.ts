@@ -31,4 +31,4 @@ const userLeaveSchema = new mongoose.Schema({
     },
 })
 
-export default module.exports = mongoose.models.Leaves|| mongoose.model('Leaves', userLeaveSchema);
+export default module.exports = mongoose.models.Leaves || mongoose.model('Leaves', userLeaveSchema);
