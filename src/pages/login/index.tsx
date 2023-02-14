@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styles from './index.module.css'
 import Router from 'next/router';
 import { saveToStorage } from '@/utils';
+import { LOCALHOST_URL } from '../../../config/localhostUrl'
 
 const Login = () => {
 
@@ -12,7 +13,7 @@ const Login = () => {
 
   const submitDetails = async (e: any) => {
     e.preventDefault()
-    const response = await fetch(`http://localhost:3000/api/userDetails/login`, {
+    const response = await fetch(`${LOCALHOST_URL}/login/login`, {
       method: 'POST',
       body: JSON.stringify({ loginData }),
       headers: {
@@ -23,10 +24,10 @@ const Login = () => {
     saveToStorage('USER_DATA', JSON.stringify(data.user))
     if (response.status === 201) {
       if (data.user.role === 'user') {
-        Router.push('/user')
-    } else if (data.user.role === 'admin' || data.user.role === 'superAdmin') {
-        Router.push('/admin')
-    }
+        Router.push('/user/user-dashboard')
+      } else if (data.user.role === 'admin' || data.user.role === 'superAdmin') {
+        Router.push('/admin/admin-dashboard')
+      }
     }
   }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styles from './index.module.css'
 import Router from 'next/router';
 import { saveToStorage } from '@/utils';
+import { LOCALHOST_URL } from 'config/localhostUrl';
 
 const Registration = () => {
 
@@ -15,7 +16,7 @@ const Registration = () => {
 
     const submitDetails = async (e: any) => {
         e.preventDefault()
-        const response = await fetch(`http://localhost:3000/api/userDetails/signup`, {
+        const response = await fetch(`${LOCALHOST_URL}/signup/signup`, {
             method: 'POST',
             body: JSON.stringify({ userData }),
             headers: {
@@ -26,9 +27,9 @@ const Registration = () => {
         saveToStorage('USER_DATA', JSON.stringify(data))
         if (response.status === 201) {
             if (userData.role === 'user') {
-                Router.push('/user')
+                Router.push('/user/user-dashboard')
             } else if (userData.role === 'admin' || userData.role === 'superAdmin') {
-                Router.push('/admin')
+                Router.push('/admin/admin-dashboard')
             }
         }
     }

@@ -5,7 +5,8 @@ import User from '../../../../model/userDetailsSchema'
 export default async function signup(req: NextApiRequest, res: NextApiResponse) {
   connect();
   try {
-    const userDetails = await User.create(req.body.userData)
+    const { userData } = req.body;
+    const userDetails = await User.create(userData)
     res.status(201).json(userDetails)
     if (!userDetails) {
       return res.json({ "code": "user not created" })

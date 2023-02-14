@@ -1,41 +1,33 @@
 import { getFromStorage, removeFromStorage } from '@/utils'
-import Router from 'next/router'
+import { LOCALHOST_URL } from 'config/localhostUrl'
 import React, { useEffect, useState } from 'react'
+import Navbar from '../../navbar'
 import styles from './index.module.css'
 
 const Admin = () => {
 
-  const [userData, setUserData] = useState({ firstName: '', lastName: '' })
   const [userLeavesData, setUserLeavesData] = useState<any>({})
 
   useEffect(() => {
-    setUserData(getFromStorage('USER_DATA'))
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/userDetails/getLeaves`, {
-          method: 'GET'
-        });
-        const json = await response.json();
-        setUserLeavesData(json.leavesData)
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
     fetchData();
   }, [])
 
-  const logoutBtn = () => {
-    removeFromStorage('USER_DATA')
-    Router.push('/')
-  }
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getLeaves`, {
+        method: 'GET'
+      });
+      const json = await response.json();
+      setUserLeavesData(json.leavesData)
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const onClickButton = async (e: any, userDetailsWithLeaveDetails: any) => {
     e.preventDefault()
     var leaveConfirmation = e.target.value
-    const response = await fetch(`http://localhost:3000/api/userDetails/postLeavesConfirmation`, {
+    const response = await fetch(`${LOCALHOST_URL}/leaveConfirmation/postLeavesConfirmation`, {
       method: 'POST',
       body: JSON.stringify({ LeaveDetails: { leaveConfirmation, userDetailsWithLeaveDetails } }),
       headers: {
@@ -48,9 +40,19 @@ const Admin = () => {
     (Object.values(userLeavesData).forEach((item1: any, index: any) => {
       if ((item1.email.toLowerCase() === userDetailsWithLeaveDetails.email.toLowerCase()) &&
         (item1.message.toLowerCase() === userDetailsWithLeaveDetails.message.toLowerCase())) {
-        let selectedValue = userLeavesData
-        selectedValue.splice(index, 1)
-        setUserLeavesData(Object.values(selectedValue))
+        const deleteData = async () => {
+          try {
+            await fetch(`${LOCALHOST_URL}/leaveRequest/deleteLeaves?user_id=${item1?._id}`, {
+              method: 'DELETE'
+            });
+            let selectedValue = userLeavesData
+            selectedValue.splice(index, 1)
+            setUserLeavesData(Object.values(selectedValue))
+          } catch (error) {
+            console.log("error", error);
+          }
+        }
+        deleteData()
       }
     }))
   }
@@ -59,14 +61,7 @@ const Admin = () => {
 
   return (
     <>
-      <div>
-        <ul className={styles.navBar}>
-          <li className={styles.navBarList}>Admin</li>
-          <li className={styles.navBarList} onClick={logoutBtn}>Logout</li>
-        </ul>
-      </div>
-      <div>Welcome {userData?.firstName + ' ' + userData?.lastName}</div>
-
+      <Navbar/>
       {Object.values(userLeavesData).length ?
         Object.values(userLeavesData).map((item: any, i: any) => {
           return (
@@ -80,7 +75,7 @@ const Admin = () => {
               ) : ''}
               <div className={styles.buttons}>
                 <button onClick={(e) => onClickButton(e, item)} value={'accepted'}>Accept</button>
-                <button onClick={(e) => onClickButton(e, item)} value={'declined'}>decline</button>
+                <button onClick={(e) => onClickButton(e, item)} value={'rejected'}>Reject</button>
               </div>
             </div>
           )
