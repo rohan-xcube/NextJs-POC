@@ -1,0 +1,65 @@
+.attendanceRequests {
+    justify-content: center;
+    display: flex;
+    font-size: 35px;
+    margin-top: 20px;
+}
+
+.attendanceForm {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.dates {
+    justify-content: center;
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.time {
+    margin-top: 15px;
+}
+
+.attendanceDropdowns, .timeDropdown {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.messageBox {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}
+
+.textarea {
+    width: 350px;
+    height: 150px;
+}
+
+.submitBtn {
+    margin-top: 20px;
+    width: 70px;
+    height: 30px;
+}
+
+.attendanceAccepted {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+    color: green;
+}
+
+.attendanceRejected {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+    color: red;
+}
+
+.noPending, .yourRequest {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+}

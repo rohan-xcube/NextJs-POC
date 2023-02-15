@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import connect from 'lib/mongodb';
 import Leaves from '../../../../model/applyLeaveSchema'
 import { transporter, mailOptions } from '../../../../config/nodemailer'
-import { sendToAdminEmail } from '../../../../templates/emailTemplates'
+import { sendToAdminEmailLeave } from '../../../../templates/emailTemplates'
 
 export const config = {
   api: {
@@ -11,11 +11,11 @@ export const config = {
 }
 
 export default async function postLeaves(req: NextApiRequest, res: NextApiResponse) {
-  connect();
+connect();
   try {
-    const { LeaveDetails } = req.body;
-    const userLeaveDetails = await Leaves.create(LeaveDetails)
-    let sendMail = sendToAdminEmail(userLeaveDetails?.firstName, userLeaveDetails?.lastName, userLeaveDetails?.fromDate, userLeaveDetails?.toDate)
+    const { userLeaveData } = req.body;
+    const userLeaveDetails = await Leaves.create(userLeaveData)
+    let sendMail = sendToAdminEmailLeave(userLeaveDetails?.firstName, userLeaveDetails?.lastName, userLeaveDetails?.fromDate, userLeaveDetails?.toDate)
     transporter.sendMail({
       ...mailOptions,
       subject: "Leave request(s)",

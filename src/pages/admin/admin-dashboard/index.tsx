@@ -26,6 +26,7 @@ const AdminDashboard = () => {
             alt='attendanceRequest'
             width={60}
             height={60}
+            onClick={() => Router.push('/admin/admin-attendances')}
             style={{cursor: 'pointer'}}
           />
           <p>attendance</p>

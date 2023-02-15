@@ -1,10 +1,9 @@
-import { getFromStorage, removeFromStorage } from '@/utils'
 import { LOCALHOST_URL } from 'config/localhostUrl'
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../navbar'
 import styles from './index.module.css'
 
-const Admin = () => {
+const AdminLeaves = () => {
 
   const [userLeavesData, setUserLeavesData] = useState<any>({})
 
@@ -85,4 +84,4 @@ const Admin = () => {
   )
 }
 
-export default Admin
+export default AdminLeaves

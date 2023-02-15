@@ -26,6 +26,7 @@ const UserDashboard = () => {
             alt='attendanceRequest'
             width={60}
             height={60}
+            onClick={() => Router.push('/user/user-attendances')}
             style={{cursor: 'pointer'}}
           />
           <p>attendance</p>

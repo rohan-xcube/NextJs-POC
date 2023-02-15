@@ -2,28 +2,21 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import connect from 'lib/mongodb';
 import LeaveConfirmation from '../../../../model/leaveConfirmationSchema'
 import { transporter, mailOptions } from '../../../../config/nodemailer'
-import { sendToUserEmail } from '../../../../templates/emailTemplates'
-import { adminMailOptions } from 'config/getLoggedMail';
-
-export const config = {
-  api: {
-    responseLimit: false,
-  },
-}
+import { sendToUserEmailLeave } from '../../../../templates/emailTemplates'
 
 export default async function postLeavesConfirmation(req: NextApiRequest, res: NextApiResponse) {
   connect();
   try {
     const { LeaveDetails } = req.body;
     const userLeaveConfirmationDetails = await LeaveConfirmation.create(LeaveDetails)
-    let sendMail = sendToUserEmail(userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.firstName,
+    let sendMail = sendToUserEmailLeave(userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.firstName,
       userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.lastName,
       userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.fromDate,
       userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.toDate,
       userLeaveConfirmationDetails?.leaveConfirmation)
     transporter.sendMail({
       ...mailOptions,
-      subject: "Your Leave request(s) has been acknowledged",
+      subject: "Your Leave(s) request has been acknowledged",
       text: "Plaintext version of the message",
       html: sendMail
     })

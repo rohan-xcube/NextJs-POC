@@ -1,14 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import connect from 'lib/mongodb';
 import LeaveConfirmation from '../../../../model/leaveConfirmationSchema'
- 
-export const config = {
-    api: {
-        responseLimit: false,
-    },
-}
 
-export default async function getLeaves(req: NextApiRequest, res: NextApiResponse) {
+export default async function getLeavesConfirmation(req: NextApiRequest, res: NextApiResponse) {
 connect();
     try {
         const {user_email} = req.query

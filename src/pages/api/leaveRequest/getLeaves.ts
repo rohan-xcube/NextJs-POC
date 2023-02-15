@@ -2,13 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import connect from 'lib/mongodb';
 import Leaves from '../../../../model/applyLeaveSchema'
 
-
-export const config = {
-  api: {
-    responseLimit: false,
-  },
-}
-
 connect();
 export default async function getLeaves(req: NextApiRequest, res: NextApiResponse) {
   try {

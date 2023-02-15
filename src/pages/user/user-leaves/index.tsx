@@ -1,10 +1,10 @@
-import { getFromStorage, removeFromStorage } from '@/utils';
+import { getFromStorage } from '@/utils';
 import React, { useEffect, useState } from 'react'
 import styles from './index.module.css'
 import { LOCALHOST_URL } from 'config/localhostUrl';
 import Navbar from '../../navbar';
 
-const User = () => {
+const UserLeaves = () => {
 
     const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '' })
     const [userLeaveData, setUserLeaveData] = useState<ApplyLeaveDetails>({
@@ -80,12 +80,11 @@ const User = () => {
         }
     }
 
-
     return (
         <>
             <Navbar/>
-            <div className={styles.applyLeaves}>
-                Apply Leaves
+            <div className={styles.leavesRequests}>
+                Leaves Requests
             </div>
 
             {leaveRequestStatus()}
@@ -129,4 +128,4 @@ const User = () => {
     )
 }
 
-export default User
+export default UserLeaves

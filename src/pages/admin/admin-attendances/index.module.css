@@ -1,0 +1,22 @@
+
+.attendancesBox {
+    width: 700px;
+    border: 1px solid white;
+    padding: 20px;
+    margin: 50px;
+}
+
+.message {
+    margin-top: 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.noRequests {
+    display: flex;
+    justify-content: center;
+}
