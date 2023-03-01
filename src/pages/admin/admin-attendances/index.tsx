@@ -1,3 +1,4 @@
+import { convertTimeStampToDate } from '@/utils'
 import { LOCALHOST_URL } from 'config/localhostUrl'
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../navbar'
@@ -5,7 +6,8 @@ import styles from './index.module.css'
 
 const AdminAttendances = () => {
 
-  const [userAttendancesData, setUserAttendancesData] = useState<any>({})
+  const [userAttendancesData, setUserAttendancesData] = useState<any>([])
+  let requestPending = true;
 
   useEffect(() => {
     fetchData();
@@ -13,11 +15,25 @@ const AdminAttendances = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/getAttendances`, {
+      const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/getAllAttendances`, {
         method: 'GET'
       });
-      const json = await response.json();
-      setUserAttendancesData(json.attendancesData)
+      const attendancesRequestsUserData = await response.json();
+      let userInfoAttendancesData: any = [];
+      Object.values(attendancesRequestsUserData.attendancesData).map(async (item: any) => {
+        const userDataResponse = await fetch(`${LOCALHOST_URL}/userDetails/getUserDetailsById`, {
+          method: 'POST',
+          body: JSON.stringify({ id: item.userId }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const userData = await userDataResponse.json();
+        const attendancesData = { ...userData, ...item };
+        userInfoAttendancesData = [...userInfoAttendancesData, { ...attendancesData }]
+        setUserAttendancesData(userInfoAttendancesData);
+      }
+      )
     } catch (error) {
       console.log("error", error);
     }
@@ -25,49 +41,44 @@ const AdminAttendances = () => {
 
   const onClickButton = async (e: any, userDetailsWithAttendanceDetails: any) => {
     e.preventDefault()
-    var attendanceConfirmation = e.target.value
-    const response = await fetch(`${LOCALHOST_URL}/attendanceConfirmation/postAttendancesConfirmation`, {
-      method: 'POST',
-      body: JSON.stringify({ AttendanceDetails: { attendanceConfirmation, userDetailsWithAttendanceDetails } }),
+    let attendanceConfirmation = false;
+    if (e.target.value === 'accepted') {
+      attendanceConfirmation = true;
+    } else if (e.target.value === 'rejected') {
+      attendanceConfirmation = false;
+    }
+    requestPending = false;
+
+    const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/putAttendances?userId=${userDetailsWithAttendanceDetails._id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        userAttendanceData: {
+          attendanceConfirmation, requestPending, requestType: userDetailsWithAttendanceDetails.requestType, fromDate: userDetailsWithAttendanceDetails.fromDate,
+          toDate: userDetailsWithAttendanceDetails.toDate, location: userDetailsWithAttendanceDetails.location, message: userDetailsWithAttendanceDetails.message,
+          time: userDetailsWithAttendanceDetails.time, userId: userDetailsWithAttendanceDetails.userId,
+        }
+      }),
       headers: {
         'Content-Type': 'application/json',
       },
     })
     const data = await response.json()
     console.log(data, 'data');
-
-    (Object.values(userAttendancesData).forEach((item1: any, index: any) => {
-      if ((item1.email.toLowerCase() === userDetailsWithAttendanceDetails.email.toLowerCase()) &&
-        (item1.message.toLowerCase() === userDetailsWithAttendanceDetails.message.toLowerCase())) {
-        const deleteData = async () => {
-          try {
-            await fetch(`${LOCALHOST_URL}/attendanceRequest/deleteAttendances?user_id=${item1?._id}`, {
-              method: 'DELETE'
-            });
-            let selectedValue = userAttendancesData
-            selectedValue.splice(index, 1)
-            setUserAttendancesData(Object.values(selectedValue))
-          } catch (error) {
-            console.log("error", error);
-          }
-        }
-        deleteData()
-      }
-    }))
+    window.location.reload();
   }
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       {Object.values(userAttendancesData).length ?
-        Object.values(userAttendancesData).map((item: any, i: any) => {
+        Object.values(userAttendancesData).filter((item: any) => item.requestPending).reverse().map((item2: any, i: any) => {
           return (
             <div key={i} className={styles.attendancesBox}>
-              <div>{item.firstName} {item.lastName} requested attendance(s) from {item.fromDate} to {item.toDate}</div>
-              <div className={styles.message}> message: {item.message}</div>
+              <div>{item2.user.firstName} {item2.user.lastName} requested attendance(s) from {convertTimeStampToDate(item2.fromDate)} to {convertTimeStampToDate(item2.toDate)}</div>
+              <div className={styles.message}> message: {item2.message}</div>
               <div className={styles.buttons}>
-                <button onClick={(e) => onClickButton(e, item)} value={'accepted'}>Accept</button>
-                <button onClick={(e) => onClickButton(e, item)} value={'rejected'}>Reject</button>
+                <button onClick={(e) => onClickButton(e, item2)} value={'accepted'}>Accept</button>
+                <button onClick={(e) => onClickButton(e, item2)} value={'rejected'}>Reject</button>
               </div>
             </div>
           )

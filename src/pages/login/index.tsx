@@ -31,24 +31,30 @@ const Login = () => {
     }
   }
 
+  const enableNextButton = (): Boolean => {
+    return (
+      loginData.email !== '' && loginData.password !== ''
+    )
+  }
+
   return (
     <>
-      <h2 className={styles.login}>Login form</h2>
+      <h2 className={styles.login}>Login Form</h2>
       <form onSubmit={submitDetails} className={styles.loginForm}>
         <div className={styles.formFields}>
-          <label>Enter Email:</label>
+          <label className={styles.inputTexts}>Enter Email:<span className={styles.asterisk}>* </span></label>
           <input
             onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
             type={'email'} />
         </div>
         <div className={styles.formFields}>
-          <label>Enter password:</label>
+          <label className={styles.inputTexts}>Enter password:<span className={styles.asterisk}>* </span></label>
           <input
             onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
             type={'password'} />
         </div>
         <div>
-          <button className={styles.loginBtn} type='submit'>Login</button>
+          <button className={!enableNextButton() ? styles.submitBtnDisabled : styles.submitBtnEnabled} type='submit' disabled={!enableNextButton()}>Login</button>
         </div>
       </form>
       <div className={styles.bottomText}>

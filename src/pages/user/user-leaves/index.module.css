@@ -4,6 +4,7 @@
     display: flex;
     font-size: 35px;
     margin-top: 20px;
+    font-family: sans-serif;
 }
 
 .leaveAccepted {
@@ -11,6 +12,7 @@
     display: flex;
     margin-top: 15px;
     color: green;
+    font-family: sans-serif;
 }
 
 .leaveRejected {
@@ -18,17 +20,28 @@
     display: flex;
     margin-top: 15px;
     color: red;
+    font-family: sans-serif;
 }
 
 .noPending, .yourRequest {
     justify-content: center;
     display: flex;
     margin-top: 15px;
+    font-family: sans-serif;
 }
 
-.registrationForm {
+.leaveForm {
     padding: 30px 0;
     text-align: center;
+}
+
+.asterisk {
+    color: rgb(201, 42, 42);
+}
+
+.inputTexts {
+    font-size: 15px;
+    font-family: sans-serif;
 }
 
 .dates {
@@ -55,8 +68,24 @@
     margin-top: 15px;
 }
 
-.submitBtn {
+.submitBtnEnabled {
     margin-top: 20px;
-    width: 70px;
-    height: 30px;
+    width: 90px;
+    height: 40px;
+    background-color: rgb(30, 30, 192);
+    border-radius: 4px;
+    border: aliceblue;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.submitBtnDisabled {
+    margin-top: 20px;
+    width: 90px;
+    height: 40px;
+    background-color: rgb(99, 99, 179);
+    border-radius: 4px;
+    border: aliceblue;
+    cursor: pointer;
+    font-size: 20px;
 }

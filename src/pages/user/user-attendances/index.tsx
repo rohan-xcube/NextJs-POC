@@ -3,22 +3,26 @@ import React, { useEffect, useState } from 'react'
 import styles from './index.module.css'
 import { requestTypeOptions, locationOptions, hoursOptions, minutesOptions, secondsOptions } from '../../../../config/dropdownOptions'
 import { LOCALHOST_URL } from 'config/localhostUrl'
-import { getFromStorage } from '@/utils'
+import { convertDateToTimeStamp, getFromStorage } from '@/utils'
+import Calender from '@/pages/calender'
 
 const UserAttendance = () => {
 
-    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '' })
+    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '', _id: '' })
     const [userAttendanceData, setUserAttendanceData] = useState({
         requestType: requestTypeOptions[0],
-        fromDate: '',
-        toDate: '',
+        fromDate: 0,
+        toDate: 0,
         location: locationOptions[0],
         hours: hoursOptions[0],
         minutes: minutesOptions[0],
         seconds: secondsOptions[0],
-        message: ''
+        message: '',
+        attendanceConfirmation: false,
+        requestPending: true
     })
     const [attendanceConfirmation, setAttendanceConfirmation] = useState<any>({})
+    const [leaveConfirmation, setLeaveConfirmation] = useState<any>({})
     const [submitStatus, setSubmitStatus] = useState(false)
 
     useEffect(() => {
@@ -26,14 +30,13 @@ const UserAttendance = () => {
     }, [])
 
     useEffect(() => {
-        fetchData();
-    }, [userData])
+        fetchAttendanceData();
+        fetchLeavesData();
+    }, [userData._id])
 
-    // console.log(userData, 'userData')
-
-    const fetchData = async () => {
+    const fetchAttendanceData = async () => {
         try {
-            const response = await fetch(`${LOCALHOST_URL}/attendanceConfirmation/getAttendancesConfirmation?user_email=${userData.email}`, {
+            const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/getAttendancesById?userId=${userData._id}`, {
                 method: 'GET'
             });
             const json = await response.json();
@@ -43,15 +46,26 @@ const UserAttendance = () => {
         }
     };
 
+    const fetchLeavesData = async () => {
+        try {
+            const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getLeavesById?userId=${userData._id}`, {
+                method: 'GET'
+            });
+            const json = await response.json();
+            setLeaveConfirmation(json.leavesData)
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
 
     var yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
 
     const submitDetails = async (e: any) => {
-        e.preventDefault()
-        let time: String = userAttendanceData.hours + ':' + userAttendanceData.minutes + ':' + userAttendanceData.seconds
+        e.preventDefault();
+        let time: string = userAttendanceData.hours + ':' + userAttendanceData.minutes + ':' + userAttendanceData.seconds
         const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/postAttendances`, {
             method: 'POST',
-            body: JSON.stringify({ userAttendanceData: { ...userAttendanceData, time: time, firstName: userData.firstName, lastName: userData.lastName, email: userData.email } }),
+            body: JSON.stringify({ userAttendanceData: { ...userAttendanceData, time: time, userId: userData._id } }),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -62,35 +76,25 @@ const UserAttendance = () => {
         }
     }
 
-    const attendanceRequestStatus = () => {
-        if (attendanceConfirmation?.attendanceConfirmation === 'accepted') {
-            return (
-                <div className={styles.attendanceAccepted}>your attendance requested is accepted.</div>
-            )
-        } else if (attendanceConfirmation?.attendanceConfirmation === 'rejected') {
-            return (
-                <div className={styles.attendanceRejected}>your attendance request is rejected.</div>
-            )
-        }  else if (!attendanceConfirmation) {
-            return (
-                <div className={styles.noPending}>you dont have any pending attendance requests.</div>
-            )
-        }
+    const enableNextButton = (): Boolean => {
+        return (
+            userAttendanceData.fromDate !== 0 && userAttendanceData.toDate !== 0 && userAttendanceData.hours !== '00' && userAttendanceData.message !== ''
+        )
     }
-
-    console.log(attendanceConfirmation, "attendanceConfirmation");
 
     return (
         <>
             <Navbar />
-            <div className={styles.attendanceRequests}>Attendance requests</div>
-
-            {attendanceRequestStatus()}
+            <Calender
+                attendanceData = {attendanceConfirmation}
+                leaveData={leaveConfirmation}
+            />
+            <div className={styles.attendanceRequests}>Attendance Requests</div>
 
             <form onSubmit={submitDetails} className={styles.attendanceForm}>
                 <div className={styles.attendanceDropdowns}>
                     <div>
-                        <label>Requests type</label>
+                        <label className={styles.inputTexts}>Requests type<span className={styles.asterisk}>* </span></label>
                         <select
                             onChange={e => setUserAttendanceData({ ...userAttendanceData, requestType: e.target.value })}>
                             {requestTypeOptions.map((value, i) => (
@@ -101,7 +105,7 @@ const UserAttendance = () => {
                         </select>
                     </div>
                     <div>
-                        <label>Location</label>
+                        <label className={styles.inputTexts}>Location<span className={styles.asterisk}>* </span></label>
                         <select
                             onChange={e => setUserAttendanceData({ ...userAttendanceData, location: e.target.value })}>
                             {locationOptions.map((value, i) => (
@@ -113,24 +117,24 @@ const UserAttendance = () => {
                     </div>
                 </div>
                 <div className={styles.dates}>
-                    <label>From Date</label>
+                    <label className={styles.inputTexts}>From Date<span className={styles.asterisk}>*</span></label>
                     <input
                         type="date"
-                        onChange={(e) => setUserAttendanceData({ ...userAttendanceData, fromDate: e.target.value })}
+                        onChange={(e) => setUserAttendanceData({ ...userAttendanceData, fromDate: convertDateToTimeStamp(e.target.value) })}
                         max={yesterday}
                     />
-                    <label>To Date</label>
+                    <label className={styles.inputTexts}>To Date<span className={styles.asterisk}>*</span></label>
                     <input
                         type="date"
-                        onChange={(e) => setUserAttendanceData({ ...userAttendanceData, toDate: e.target.value })}
+                        onChange={(e) => setUserAttendanceData({ ...userAttendanceData, toDate: convertDateToTimeStamp(e.target.value) })}
                         max={yesterday}
                     />
                 </div>
                 <div className={styles.time}>
-                    <label>Time:</label>
+                    <label className={styles.inputTexts}>Time:<span className={styles.asterisk}>*</span></label>
                     <div className={styles.timeDropdown}>
                         <div>
-                            <label>Hours</label>
+                            <label className={styles.inputTexts}>Hours </label>
                             <select
                                 onChange={e => setUserAttendanceData({ ...userAttendanceData, hours: e.target.value })}>
                                 {hoursOptions.map((value, i) => (
@@ -141,7 +145,7 @@ const UserAttendance = () => {
                             </select>
                         </div>
                         <div>
-                            <label>Minutes</label>
+                            <label className={styles.inputTexts}>Minutes </label>
                             <select
                                 onChange={e => setUserAttendanceData({ ...userAttendanceData, minutes: e.target.value })}>
                                 {minutesOptions.map((value, i) => (
@@ -152,7 +156,7 @@ const UserAttendance = () => {
                             </select>
                         </div>
                         <div>
-                            <label>Seconds</label>
+                            <label className={styles.inputTexts}>Seconds </label>
                             <select
                                 onChange={e => setUserAttendanceData({ ...userAttendanceData, seconds: e.target.value })}>
                                 {secondsOptions.map((value, i) => (
@@ -165,14 +169,14 @@ const UserAttendance = () => {
                     </div>
                 </div>
                 <div className={styles.messageBox}>
-                    <label>Message: </label>
+                    <label className={styles.inputTexts}>Message:<span className={styles.asterisk}>* </span></label>
                     <textarea className={styles.textarea}
                         placeholder='Enter your message here...'
                         onChange={(e) => setUserAttendanceData({ ...userAttendanceData, message: e.target.value })}
                     />
                 </div>
                 <div>
-                    <button className={styles.submitBtn} type='submit'>Submit</button>
+                    <button className={!enableNextButton() ? styles.submitBtnDisabled : styles.submitBtnEnabled} type='submit' disabled={!enableNextButton()}>Submit</button>
                 </div>
             </form>
 

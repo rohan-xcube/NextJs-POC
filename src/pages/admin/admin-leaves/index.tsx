@@ -1,3 +1,4 @@
+import { convertTimeStampToDate } from '@/utils'
 import { LOCALHOST_URL } from 'config/localhostUrl'
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../navbar'
@@ -5,7 +6,8 @@ import styles from './index.module.css'
 
 const AdminLeaves = () => {
 
-  const [userLeavesData, setUserLeavesData] = useState<any>({})
+  const [userLeavesData, setUserLeavesData] = useState<any>([])
+  let requestPending = true;
 
   useEffect(() => {
     fetchData();
@@ -13,68 +15,75 @@ const AdminLeaves = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getLeaves`, {
+      const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getAllLeaves`, {
         method: 'GET'
       });
-      const json = await response.json();
-      setUserLeavesData(json.leavesData)
+      const leaveRequestsUserData = await response.json();
+      let userInfoLeavesData: any = [];
+      Object.values(leaveRequestsUserData.leavesData).map(async (item: any) => {
+        const userDataResponse = await fetch(`${LOCALHOST_URL}/userDetails/getUserDetailsById`, {
+          method: 'POST',
+          body: JSON.stringify({ id: item.userId }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const userData = await userDataResponse.json();
+        const leavesData = { ...userData, ...item };
+        userInfoLeavesData = [...userInfoLeavesData, { ...leavesData }]
+        setUserLeavesData(userInfoLeavesData);
+      }
+      )
     } catch (error) {
       console.log("error", error);
     }
   };
 
   const onClickButton = async (e: any, userDetailsWithLeaveDetails: any) => {
-    e.preventDefault()
-    var leaveConfirmation = e.target.value
-    const response = await fetch(`${LOCALHOST_URL}/leaveConfirmation/postLeavesConfirmation`, {
-      method: 'POST',
-      body: JSON.stringify({ LeaveDetails: { leaveConfirmation, userDetailsWithLeaveDetails } }),
+    e.preventDefault();
+    let leaveConfirmation = false;
+    if (e.target.value === 'accepted') {
+      leaveConfirmation = true;
+    } else if (e.target.value === 'rejected') {
+      leaveConfirmation = false;
+    }
+    requestPending = false;
+
+    const response = await fetch(`${LOCALHOST_URL}/leaveRequest/putLeaves?userId=${userDetailsWithLeaveDetails._id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        userLeaveData: {
+          leaveConfirmation, requestPending, fromDate: userDetailsWithLeaveDetails.fromDate,
+          toDate: userDetailsWithLeaveDetails.toDate, message: userDetailsWithLeaveDetails.message,
+          attachmentFileObject: userDetailsWithLeaveDetails.attachmentFileObject, userId: userDetailsWithLeaveDetails.userId
+        }
+      }),
       headers: {
         'Content-Type': 'application/json',
       },
     })
     const data = await response.json()
     console.log(data, 'data');
-
-    (Object.values(userLeavesData).forEach((item1: any, index: any) => {
-      if ((item1.email.toLowerCase() === userDetailsWithLeaveDetails.email.toLowerCase()) &&
-        (item1.message.toLowerCase() === userDetailsWithLeaveDetails.message.toLowerCase())) {
-        const deleteData = async () => {
-          try {
-            await fetch(`${LOCALHOST_URL}/leaveRequest/deleteLeaves?user_id=${item1?._id}`, {
-              method: 'DELETE'
-            });
-            let selectedValue = userLeavesData
-            selectedValue.splice(index, 1)
-            setUserLeavesData(Object.values(selectedValue))
-          } catch (error) {
-            console.log("error", error);
-          }
-        }
-        deleteData()
-      }
-    }))
+    window.location.reload();
   }
-
-  console.log((userLeavesData), 'userLeavesData');
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       {Object.values(userLeavesData).length ?
-        Object.values(userLeavesData).map((item: any, i: any) => {
+        Object.values(userLeavesData).filter((item: any) => item.requestPending).map((item2: any, i: any) => {
           return (
             <div key={i} className={styles.leavesBox}>
-              <div>{item.firstName} {item.lastName} requested leave(s) from {item.fromDate} to {item.toDate}</div>
-              <div className={styles.message}> message: {item.message}</div>
-              {item.attachmentFileObject ? (
+              <div>{item2.user.firstName} {item2.user.lastName} requested leave(s) from {convertTimeStampToDate(item2.fromDate)} to {convertTimeStampToDate(item2.toDate)}</div>
+              <div className={styles.message}> message: {item2.message}</div>
+              {item2.attachmentFileObject ? (
                 <div className={styles.attachments}>
-                  <a download='attachment' href={item.attachmentFileObject} >click here to download attachment(s)</a>
+                  <a download='attachment' href={item2.attachmentFileObject}>click here to download attachment(s)</a>
                 </div>
               ) : ''}
               <div className={styles.buttons}>
-                <button onClick={(e) => onClickButton(e, item)} value={'accepted'}>Accept</button>
-                <button onClick={(e) => onClickButton(e, item)} value={'rejected'}>Reject</button>
+                <button onClick={(e) => onClickButton(e, item2)} value={'accepted'}>Accept</button>
+                <button onClick={(e) => onClickButton(e, item2)} value={'rejected'}>Reject</button>
               </div>
             </div>
           )

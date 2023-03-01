@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const schema = mongoose.Schema
+
 const userAttendanceSchema = new mongoose.Schema({
     requestType: {
         type: String,
@@ -10,11 +12,11 @@ const userAttendanceSchema = new mongoose.Schema({
         required: true,
     },
     fromDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     toDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     time: {
@@ -25,19 +27,18 @@ const userAttendanceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    firstName: {
-        type: String,
+    userId: {
+        type: schema.Types.ObjectId,
         required: true,
     },
-    lastName: {
-        type: String,
+    attendanceConfirmation: {
+        type: Boolean,
         required: true,
     },
-    email: {
-        type: String,
+    requestPending: {
+        type: Boolean,
         required: true,
-        unique: false
-    },
+    }
 })
 
 export default module.exports = mongoose.models.Attendances || mongoose.model('Attendances', userAttendanceSchema);

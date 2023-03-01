@@ -10,15 +10,22 @@ export const config = {
   },
 }
 
-export default async function postLeaves(req: NextApiRequest, res: NextApiResponse) {
-connect();
+export default async function putLeaves(req: NextApiRequest, res: NextApiResponse) {
+  connect();
   try {
     const { userLeaveData } = req.body;
-    const userLeaveDetails = await Leaves.create(userLeaveData)
-    // let sendMail = sendToAdminEmailLeave(userLeaveDetails?.firstName, userLeaveDetails?.lastName, userLeaveDetails?.fromDate, userLeaveDetails?.toDate)
+    const { userId } = req.query
+    const options = { new: true }
+
+    const userLeaveDetails = await Leaves.findByIdAndUpdate({ _id: userId }, userLeaveData, options)
+    // let sendMail = sendToUserEmailLeave(userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.firstName,
+    //   userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.lastName,
+    //   userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.fromDate,
+    //   userLeaveConfirmationDetails?.userDetailsWithLeaveDetails?.toDate,
+    //   userLeaveConfirmationDetails?.leaveConfirmation)
     // transporter.sendMail({
     //   ...mailOptions,
-    //   subject: "Leave request(s)",
+    //   subject: "Your Leave(s) request has been acknowledged",
     //   text: "Plaintext version of the message",
     //   html: sendMail
     // })

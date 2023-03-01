@@ -1,6 +1,8 @@
 declare interface ApplyLeaveDetails {
-    fromDate?: string,
-    toDate?: string,
+    fromDate?: number,
+    toDate?: number,
     message?: string,
-    attachmentFileObject?: any
+    attachmentFileObject?: any,
+    leaveConfirmation?: boolean,
+    requestPending?: boolean
 }

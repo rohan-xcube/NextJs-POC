@@ -1,11 +1,23 @@
+
 .navBar {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 50px;
+    background-color: grey;
 }
 
 .navBarList {
     float: right;
-    margin-left: 10px;
+    margin-left: 20px;
+    font-size: 30px;
+    font-family: sans-serif;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.welcomeUserName {
+    font-size: 30px;
+    font-family: sans-serif;
 }

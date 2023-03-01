@@ -18,13 +18,13 @@ const Navbar = () => {
 
     return (
         <>
-            <div>
+            <div className={styles.navBarParent}>
                 <ul className={styles.navBar}>
-                    <li className={styles.navBarList}>{userData?.role}</li>
                     <li className={styles.navBarList} onClick={logoutBtn}>Logout</li>
+                    <li className={styles.navBarList}>{userData?.role}</li>
                 </ul>
             </div>
-            <div>Welcome {userData?.firstName + ' ' + userData?.lastName}</div></>
+            <div className={styles.welcomeUserName}>Welcome, {userData?.firstName + ' ' + userData?.lastName}</div></>
     )
 }
 

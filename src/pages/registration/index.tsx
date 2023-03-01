@@ -34,42 +34,56 @@ const Registration = () => {
         }
     }
 
+    const enableNextButton = (): Boolean => {
+        return (
+            userData.firstName !== '' && userData.lastName !== '' && userData.email !== '' && userData.password !== '' && userData.role !== ''
+        )
+    }
+
     return (
         <>
-            <h2 className={styles.registration}>Registration form</h2>
+            <h2 className={styles.registration}>Registration Form</h2>
             <form onSubmit={submitDetails} className={styles.registrationForm}>
                 <div className={styles.formFields}>
-                    <label>Enter First name:</label>
+                    <label className={styles.inputTexts}>Enter First name:<span className={styles.asterisk}>* </span></label>
                     <input
                         onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
                         type={'text'} />
                 </div>
                 <div className={styles.formFields}>
-                    <label>Enter Last name:</label>
+                    <label className={styles.inputTexts}>Enter Last name:<span className={styles.asterisk}>* </span></label>
                     <input
                         onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
                         type={'text'} />
                 </div>
                 <div className={styles.formFields}>
-                    <label>Enter Email:</label>
+                    <label className={styles.inputTexts}>Enter Email:<span className={styles.asterisk}>* </span></label>
                     <input
                         onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                         type={'email'} />
                 </div>
                 <div className={styles.formFields}>
-                    <label>Enter password:</label>
+                    <label className={styles.inputTexts}>Enter password:<span className={styles.asterisk}>* </span></label>
                     <input
                         onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                         type={'password'} />
                 </div>
                 <div className={styles.formFields}>
-                    <label>Please select any one role:</label>
-                    <input type={'radio'} value={'user'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> User
-                    <input type={'radio'} value={'admin'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> Admin
-                    <input type={'radio'} value={'superAdmin'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> Super Admin
+                    <label className={styles.inputTexts}>Please select any one role:<span className={styles.asterisk}>* </span></label>
+                    <div className={styles.radioButtons}>
+                        <div>
+                            <input type={'radio'} value={'user'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> <label className={styles.inputTexts}>User</label>
+                        </div>
+                        <div>
+                            <input type={'radio'} value={'admin'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> <label className={styles.inputTexts}>Admin</label>
+                        </div>
+                        <div>
+                            <input type={'radio'} value={'superAdmin'} name='role' onChange={(e) => setUserData({ ...userData, role: e.target.value })} readOnly /> <label className={styles.inputTexts}>Super Admin</label>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <button className={styles.submitBtn} type='submit'>Submit</button>
+                    <button className={!enableNextButton() ? styles.submitBtnDisabled : styles.submitBtnEnabled} type='submit' disabled={!enableNextButton()}>Submit</button>
                 </div>
             </form>
             <div className={styles.bottomText}>

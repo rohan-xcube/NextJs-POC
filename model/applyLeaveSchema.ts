@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
+const schema = mongoose.Schema
+
 const userLeaveSchema = new mongoose.Schema({
     fromDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     toDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     message: {
@@ -16,19 +18,18 @@ const userLeaveSchema = new mongoose.Schema({
     attachmentFileObject: {
         type: String,
     },
-    firstName: {
-        type: String,
+    userId: {
+        type: schema.Types.ObjectId,
         required: true,
     },
-    lastName: {
-        type: String,
+    leaveConfirmation: {
+        type: Boolean,
         required: true,
     },
-    email: {
-        type: String,
+    requestPending: {
+        type: Boolean,
         required: true,
-        unique: false
-    },
+    }
 })
 
 export default module.exports = mongoose.models.Leaves || mongoose.model('Leaves', userLeaveSchema);

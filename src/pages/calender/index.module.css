@@ -1,0 +1,74 @@
+
+.wrapper {
+    width: 99%;
+    height: 100vh;
+    border: 1px solid;
+    margin: 5px;
+}
+
+.calenderHead {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 24px;
+}
+
+.sevenColumnGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    height: 27px;
+}
+
+.headDay {
+    text-align: center;
+    background: darkkhaki;
+    font-size: 1.2rem;
+}
+
+.caldenderBody {
+    height: calc(100% - 27px - 40px);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+.caldenderFebBody {
+    height: calc(100% - 27px - 40px);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.styledDay {
+    border: 1px solid;
+    text-align: right;
+    padding: 5px;
+}
+
+.styledActiveDay {
+    border: 1px solid;
+    text-align: right;
+    padding: 5px;
+    background-color: orange;
+}
+
+.styledEventRejected {
+    display: grid;
+    text-align: left;
+    background: red;
+    color: white;
+    padding: 2px 2px;
+    border-radius: 8px;
+}
+
+.styledEventAccepted {
+    display: grid;
+    text-align: left;
+    background: green;
+    color: white;
+    padding: 2px 2px;
+    border-radius: 8px;
+}

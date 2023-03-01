@@ -1,4 +1,4 @@
-import { getFromStorage } from '@/utils';
+import { convertDateToTimeStamp, convertTimeStampToDate, getFromStorage } from '@/utils';
 import React, { useEffect, useState } from 'react'
 import styles from './index.module.css'
 import { LOCALHOST_URL } from 'config/localhostUrl';
@@ -6,39 +6,20 @@ import Navbar from '../../navbar';
 
 const UserLeaves = () => {
 
-    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '' })
+    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '', _id: '' })
     const [userLeaveData, setUserLeaveData] = useState<ApplyLeaveDetails>({
-        fromDate: '',
-        toDate: '',
+        fromDate: 0,
+        toDate: 0,
         message: '',
-        attachmentFileObject: null
+        attachmentFileObject: null,
+        leaveConfirmation: false,
+        requestPending: true
     })
-    const [leaveConfirmation, setLeaveConfirmation] = useState<any>({})
     const [submitStatus, setSubmitStatus] = useState(false)
 
     useEffect(() => {
         setUserData(getFromStorage('USER_DATA'))
     }, [])
-
-    useEffect(() => {
-        fetchData();
-    }, [userData])
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch(`${LOCALHOST_URL}/leaveConfirmation/getLeavesConfirmation?user_email=${userData.email}`, {
-                method: 'GET'
-            });
-            const json = await response.json();
-            setLeaveConfirmation(json.leavesData)
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
-
-    var today = new Date().toISOString().split('T')[0];
-
-    var disableMinDate = userLeaveData?.fromDate?.toString().split('T')[0];
 
     const onChangeFileInput = (e: any) => {
         let files = e.target.files
@@ -50,76 +31,64 @@ const UserLeaves = () => {
     }
 
     const submitDetails = async (e: any) => {
-        e.preventDefault()
+        e.preventDefault();
         const response = await fetch(`${LOCALHOST_URL}/leaveRequest/postLeaves`, {
             method: 'POST',
-            body: JSON.stringify({ userLeaveData: { ...userLeaveData, firstName: userData.firstName, lastName: userData.lastName, email: userData.email } }),
+            body: JSON.stringify({ userLeaveData: { ...userLeaveData, userId: userData._id } }),
             headers: {
                 'Content-Type': 'application/json',
             },
         })
         await response.json()
-        if(response.status === 201) {
+        if (response.status === 201) {
             setSubmitStatus(true)
         }
     }
 
-    const leaveRequestStatus = () => {
-        if (leaveConfirmation?.leaveConfirmation === 'accepted') {
-            return (
-                <div className={styles.leaveAccepted}>your leave requested is accepted.</div>
-            )
-        } else if (leaveConfirmation?.leaveConfirmation === 'rejected') {
-            return (
-                <div className={styles.leaveRejected}>your leave request is rejected.</div>
-            )
-        } else if (!leaveConfirmation) {
-            return (
-                <div className={styles.noPending}>you dont have any pending leave requests.</div>
-            )
-        }
+    const enableNextButton = (): Boolean => {
+        return (
+            userLeaveData.fromDate !== 0 && userLeaveData.toDate !== 0 && userLeaveData.message !== ''
+        )
     }
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
             <div className={styles.leavesRequests}>
                 Leaves Requests
             </div>
 
-            {leaveRequestStatus()}
-
-            <form onSubmit={submitDetails} className={styles.registrationForm}>
+            <form onSubmit={submitDetails} className={styles.leaveForm}>
                 <div className={styles.dates}>
-                    <label>From Date</label>
+                    <label className={styles.inputTexts}>From Date<span className={styles.asterisk}>* </span></label>
                     <input
                         type="date"
-                        onChange={(e) => setUserLeaveData({ ...userLeaveData, fromDate: e.target.value })}
-                        min={today}
+                        onChange={(e) => setUserLeaveData({ ...userLeaveData, fromDate: convertDateToTimeStamp(e.target.value) })}
                     />
-                    <label>To Date</label>
+                    <label className={styles.inputTexts}>To Date<span className={styles.asterisk}>* </span></label>
                     <input
                         type="date"
-                        onChange={(e) => setUserLeaveData({ ...userLeaveData, toDate: e.target.value })}
-                        min={disableMinDate}
+                        onChange={(e) => setUserLeaveData({ ...userLeaveData, toDate: convertDateToTimeStamp(e.target.value) })}
+                        min={convertTimeStampToDate(userLeaveData?.fromDate)}
                     />
                 </div>
                 <div className={styles.messageBox}>
-                    <label>Message: </label>
+                    <label className={styles.inputTexts}>Message:<span className={styles.asterisk}>* </span></label>
                     <textarea className={styles.textarea}
                         placeholder='Enter your message here...'
                         onChange={(e) => setUserLeaveData({ ...userLeaveData, message: e.target.value })}
                     />
                 </div>
                 <div className={styles.attachments}>
-                    <label>Attachments: </label>
+                    <label className={styles.inputTexts}>Attachments: </label>
                     <input
                         type={'file'}
                         onChange={onChangeFileInput}
                     />
                 </div>
                 <div>
-                    <button className={styles.submitBtn} type='submit'>Submit</button>
+                    <button className={!enableNextButton() ? styles.submitBtnDisabled : styles.submitBtnEnabled} type='submit'
+                        disabled={!enableNextButton()}>Submit</button>
                 </div>
             </form>
 
