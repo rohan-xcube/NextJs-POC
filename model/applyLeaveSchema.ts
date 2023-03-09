@@ -30,6 +30,7 @@ const userLeaveSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     }
-})
+}, {timestamps: true}
+)
 
 export default module.exports = mongoose.models.Leaves || mongoose.model('Leaves', userLeaveSchema);

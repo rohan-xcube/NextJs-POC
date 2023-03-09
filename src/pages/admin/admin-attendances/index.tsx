@@ -19,21 +19,7 @@ const AdminAttendances = () => {
         method: 'GET'
       });
       const attendancesRequestsUserData = await response.json();
-      let userInfoAttendancesData: any = [];
-      Object.values(attendancesRequestsUserData.attendancesData).map(async (item: any) => {
-        const userDataResponse = await fetch(`${LOCALHOST_URL}/userDetails/getUserDetailsById`, {
-          method: 'POST',
-          body: JSON.stringify({ id: item.userId }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const userData = await userDataResponse.json();
-        const attendancesData = { ...userData, ...item };
-        userInfoAttendancesData = [...userInfoAttendancesData, { ...attendancesData }]
-        setUserAttendancesData(userInfoAttendancesData);
-      }
-      )
+      setUserAttendancesData(attendancesRequestsUserData.userInfoAttendancesData);
     } catch (error) {
       console.log("error", error);
     }
@@ -49,13 +35,13 @@ const AdminAttendances = () => {
     }
     requestPending = false;
 
-    const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/putAttendances?userId=${userDetailsWithAttendanceDetails._id}`, {
+    const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/putAttendances?userId=${userDetailsWithAttendanceDetails._doc._id}`, {
       method: 'PUT',
       body: JSON.stringify({
         userAttendanceData: {
-          attendanceConfirmation, requestPending, requestType: userDetailsWithAttendanceDetails.requestType, fromDate: userDetailsWithAttendanceDetails.fromDate,
-          toDate: userDetailsWithAttendanceDetails.toDate, location: userDetailsWithAttendanceDetails.location, message: userDetailsWithAttendanceDetails.message,
-          time: userDetailsWithAttendanceDetails.time, userId: userDetailsWithAttendanceDetails.userId,
+          attendanceConfirmation, requestPending, requestType: userDetailsWithAttendanceDetails._doc.requestType, fromDate: userDetailsWithAttendanceDetails._doc.fromDate,
+          toDate: userDetailsWithAttendanceDetails._doc.toDate, location: userDetailsWithAttendanceDetails._doc.location, message: userDetailsWithAttendanceDetails._doc.message,
+          time: userDetailsWithAttendanceDetails._doc.time, userId: userDetailsWithAttendanceDetails._doc.userId,
         }
       }),
       headers: {
@@ -67,15 +53,17 @@ const AdminAttendances = () => {
     window.location.reload();
   }
 
+  const sortBylatestDate = Object.values(userAttendancesData).map((obj: any) => { return { ...obj, date: new Date(obj?._doc?.createdAt) } }).sort((a, b) => b.date - a.date)
+
   return (
     <>
       <Navbar />
-      {Object.values(userAttendancesData).length ?
-        Object.values(userAttendancesData).filter((item: any) => item.requestPending).reverse().map((item2: any, i: any) => {
+      {sortBylatestDate.length ?
+        sortBylatestDate.filter((item: any) => item?._doc?.requestPending).map((item2: any, i: any) => {
           return (
             <div key={i} className={styles.attendancesBox}>
-              <div>{item2.user.firstName} {item2.user.lastName} requested attendance(s) from {convertTimeStampToDate(item2.fromDate)} to {convertTimeStampToDate(item2.toDate)}</div>
-              <div className={styles.message}> message: {item2.message}</div>
+              <div>{item2.user.firstName} {item2.user.lastName} requested attendance(s) from {convertTimeStampToDate(item2?._doc?.fromDate)} to {convertTimeStampToDate(item2?._doc?.toDate)}</div>
+              <div className={styles.message}> message: {item2?._doc?.message}</div>
               <div className={styles.buttons}>
                 <button onClick={(e) => onClickButton(e, item2)} value={'accepted'}>Accept</button>
                 <button onClick={(e) => onClickButton(e, item2)} value={'rejected'}>Reject</button>

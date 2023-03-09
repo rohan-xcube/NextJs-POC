@@ -39,6 +39,7 @@ const userAttendanceSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     }
-})
+}, {timestamps: true}
+)
 
 export default module.exports = mongoose.models.Attendances || mongoose.model('Attendances', userAttendanceSchema);

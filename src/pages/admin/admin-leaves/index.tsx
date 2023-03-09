@@ -17,23 +17,9 @@ const AdminLeaves = () => {
     try {
       const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getAllLeaves`, {
         method: 'GET'
-      });
-      const leaveRequestsUserData = await response.json();
-      let userInfoLeavesData: any = [];
-      Object.values(leaveRequestsUserData.leavesData).map(async (item: any) => {
-        const userDataResponse = await fetch(`${LOCALHOST_URL}/userDetails/getUserDetailsById`, {
-          method: 'POST',
-          body: JSON.stringify({ id: item.userId }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const userData = await userDataResponse.json();
-        const leavesData = { ...userData, ...item };
-        userInfoLeavesData = [...userInfoLeavesData, { ...leavesData }]
-        setUserLeavesData(userInfoLeavesData);
-      }
-      )
+      })
+      const leaveRequestsUserData = await response.json()
+      setUserLeavesData(leaveRequestsUserData.userInfoLeavesData);
     } catch (error) {
       console.log("error", error);
     }
@@ -48,14 +34,13 @@ const AdminLeaves = () => {
       leaveConfirmation = false;
     }
     requestPending = false;
-
-    const response = await fetch(`${LOCALHOST_URL}/leaveRequest/putLeaves?userId=${userDetailsWithLeaveDetails._id}`, {
+    const response = await fetch(`${LOCALHOST_URL}/leaveRequest/putLeaves?userId=${userDetailsWithLeaveDetails._doc._id}`, {
       method: 'PUT',
       body: JSON.stringify({
         userLeaveData: {
-          leaveConfirmation, requestPending, fromDate: userDetailsWithLeaveDetails.fromDate,
-          toDate: userDetailsWithLeaveDetails.toDate, message: userDetailsWithLeaveDetails.message,
-          attachmentFileObject: userDetailsWithLeaveDetails.attachmentFileObject, userId: userDetailsWithLeaveDetails.userId
+          leaveConfirmation, requestPending, fromDate: userDetailsWithLeaveDetails._doc.fromDate,
+          toDate: userDetailsWithLeaveDetails._doc.toDate, message: userDetailsWithLeaveDetails._doc.message,
+          attachmentFileObject: userDetailsWithLeaveDetails._doc.attachmentFileObject, userId: userDetailsWithLeaveDetails._doc.userId
         }
       }),
       headers: {
@@ -67,18 +52,20 @@ const AdminLeaves = () => {
     window.location.reload();
   }
 
+  const sortBylatestDate = Object.values(userLeavesData).map((obj: any) => { return { ...obj, date: new Date(obj?._doc?.createdAt) } }).sort((a, b) => b.date - a.date)
+
   return (
     <>
       <Navbar />
-      {Object.values(userLeavesData).length ?
-        Object.values(userLeavesData).filter((item: any) => item.requestPending).map((item2: any, i: any) => {
+      {sortBylatestDate.length ?
+        sortBylatestDate.filter((item: any) => item?._doc?.requestPending).map((item2: any, i: any) => {
           return (
             <div key={i} className={styles.leavesBox}>
-              <div>{item2.user.firstName} {item2.user.lastName} requested leave(s) from {convertTimeStampToDate(item2.fromDate)} to {convertTimeStampToDate(item2.toDate)}</div>
-              <div className={styles.message}> message: {item2.message}</div>
-              {item2.attachmentFileObject ? (
+              <div>{item2.user?.firstName} {item2.user?.lastName} requested leave(s) from {convertTimeStampToDate(item2?._doc?.fromDate)} to {convertTimeStampToDate(item2?._doc?.toDate)}</div>
+              <div className={styles.message}> message: {item2?._doc?.message}</div>
+              {item2._doc?.attachmentFileObject ? (
                 <div className={styles.attachments}>
-                  <a download='attachment' href={item2.attachmentFileObject}>click here to download attachment(s)</a>
+                  <a download='attachment' href={item2?._doc?.attachmentFileObject}>click here to download attachment(s)</a>
                 </div>
               ) : ''}
               <div className={styles.buttons}>

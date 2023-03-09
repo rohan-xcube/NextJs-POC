@@ -62,7 +62,7 @@ const UserAttendance = () => {
 
     const submitDetails = async (e: any) => {
         e.preventDefault();
-        let time: string = userAttendanceData.hours + ':' + userAttendanceData.minutes + ':' + userAttendanceData.seconds
+        let time: string = userAttendanceData.hours + ':' + userAttendanceData.minutes + ':' + userAttendanceData.seconds;
         const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/postAttendances`, {
             method: 'POST',
             body: JSON.stringify({ userAttendanceData: { ...userAttendanceData, time: time, userId: userData._id } }),
