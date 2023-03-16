@@ -1,6 +1,12 @@
 .icons {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 25px;
     margin-top: 20px;
+}
+
+.iconText {
+    display: flex;
+    justify-content: center;
+    font-family: sans-serif;
 }

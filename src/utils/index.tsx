@@ -28,6 +28,24 @@ export const convertTimeStampToDate = (givenTime: any) => {
     return date.toISOString()?.split('T')[0];
 }
 
+export const convertTimeStampToString = (givenTime: any) => {
+    var date = new Date(givenTime);
+    return date.toString()
+}
+
+export const returnYearFromTimeStamp = (givenTime: any) => {
+    return new Date(convertTimeStampToString(givenTime)).getFullYear().toString();
+}
+
+export const daysInMonth = (iMonth: any, iYear: any) => {
+    return 32 - new Date(iYear, iMonth, 32).getDate();
+}
+
+export const isWeekday = (year: any, month: any, day: any) => {
+    day = new Date(year, month, day).getDay();
+    return day != 0 && day != 6;
+}
+
 export const range = (end: any) => {
     const { result } = Array.from({ length: end }).reduce(
         ({ result, current }) => ({
@@ -39,19 +57,8 @@ export const range = (end: any) => {
     return result;
 };
 
-// export const sortDays = (date: any) => {
-//     const dayIndex = new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-//     const sortedDays = [...DAYS.slice(dayIndex), ...DAYS.slice(0, dayIndex)]
-//     return sortedDays;
-// }
-
 export const getDaysInMonth = (month: any, year: any) => {
     return new Date(year, month + 1, 0).getDate()
-}
-
-export const getSortedDays = (month: any, year: any) => {
-    const dayIndex = new Date(year, month, 1).getDay()
-    return [...DAYS.slice(dayIndex), ...DAYS.slice(0, dayIndex)]
 }
 
 export const getDateObj = (day: any, month: any, year: any) => {
@@ -76,8 +83,8 @@ export const dateRange = (startDate: any, endDate: any, steps = 1) => {
     return dateArray
 }
 
-// export const getSortedDays = (date: any) => {
-//     const daysInMonth = range(getDaysInMonth(date))
-//     const index = new Date(date.getFullYear(), date.getMonth(), 1).getDay()
-//     return [...Array(index === 0 ? 6 : index - 1), ...daysInMonth]
-// } 
+export const getSortedDays = (month: any, year: any) => {
+    const daysInMonth = range(getDaysInMonth(month, year))
+    const index = new Date(year, month, 1).getDay()
+    return [...Array(index === 0 ? 6 : index - 1), ...daysInMonth];
+} 

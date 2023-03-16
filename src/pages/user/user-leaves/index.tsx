@@ -6,7 +6,7 @@ import Navbar from '../../navbar';
 
 const UserLeaves = () => {
 
-    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '', _id: '' })
+    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '', _id: '' });
     const [userLeaveData, setUserLeaveData] = useState<ApplyLeaveDetails>({
         fromDate: 0,
         toDate: 0,
@@ -14,11 +14,34 @@ const UserLeaves = () => {
         attachmentFileObject: null,
         leaveConfirmation: false,
         requestPending: true
-    })
-    const [submitStatus, setSubmitStatus] = useState(false)
+    });
+    const [submitStatus, setSubmitStatus] = useState(false);
+    const [dateErrorMessage, setDateErrorMessage] = useState(false);
 
     useEffect(() => {
-        setUserData(getFromStorage('USER_DATA'))
+        setUserData(getFromStorage('USER_DATA'));
+
+        const picker1: any = document.getElementById('date1');
+        picker1.addEventListener('input', (e: any) => {
+            var day = new Date(e.target.value).getDay();
+            if (day == 0 || day == 6) {
+                e.target.value = '';
+                setDateErrorMessage(true);
+                return false;
+            }
+            setDateErrorMessage(false);
+        });
+
+        const picker2: any = document.getElementById('date2');
+        picker2.addEventListener('input', (e: any) => {
+            var day = new Date(e.target.value).getDay();
+            if (day == 0 || day == 6) {
+                e.target.value = '';
+                setDateErrorMessage(true);
+                return false;
+            }
+            setDateErrorMessage(false);
+        });
     }, [])
 
     const onChangeFileInput = (e: any) => {
@@ -57,16 +80,20 @@ const UserLeaves = () => {
             <div className={styles.leavesRequests}>
                 Leaves Requests
             </div>
-
+            {dateErrorMessage &&
+                <div className={styles.dateErrorMessage}>
+                    Weekends are not allowed
+                </div>
+            }
             <form onSubmit={submitDetails} className={styles.leaveForm}>
                 <div className={styles.dates}>
                     <label className={styles.inputTexts}>From Date<span className={styles.asterisk}>* </span></label>
-                    <input
+                    <input id='date1'
                         type="date"
                         onChange={(e) => setUserLeaveData({ ...userLeaveData, fromDate: convertDateToTimeStamp(e.target.value) })}
                     />
                     <label className={styles.inputTexts}>To Date<span className={styles.asterisk}>* </span></label>
-                    <input
+                    <input id='date2'
                         type="date"
                         onChange={(e) => setUserLeaveData({ ...userLeaveData, toDate: convertDateToTimeStamp(e.target.value) })}
                         min={convertTimeStampToDate(userLeaveData?.fromDate)}

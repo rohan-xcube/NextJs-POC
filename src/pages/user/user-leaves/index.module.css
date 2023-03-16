@@ -7,6 +7,14 @@
     font-family: sans-serif;
 }
 
+.dateErrorMessage {
+    justify-content: center;
+    display: flex;
+    margin-top: 15px;
+    color: red;
+    font-family: sans-serif;
+}
+
 .leaveAccepted {
     justify-content: center;
     display: flex;

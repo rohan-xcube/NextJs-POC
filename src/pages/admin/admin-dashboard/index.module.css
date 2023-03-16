@@ -4,3 +4,9 @@
     gap: 25px;
     margin-top: 20px;
 }
+
+.iconText {
+    display: flex;
+    justify-content: center;
+    font-family: sans-serif;
+}

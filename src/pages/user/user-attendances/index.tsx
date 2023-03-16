@@ -8,7 +8,7 @@ import Calender from '@/pages/calender'
 
 const UserAttendance = () => {
 
-    const [userData, setUserData] = useState({ firstName: '', lastName: '', email: '', _id: '' })
+    const [userData, setUserData] = useState({ _id: '' });
     const [userAttendanceData, setUserAttendanceData] = useState({
         requestType: requestTypeOptions[0],
         fromDate: 0,
@@ -20,43 +20,35 @@ const UserAttendance = () => {
         message: '',
         attendanceConfirmation: false,
         requestPending: true
-    })
-    const [attendanceConfirmation, setAttendanceConfirmation] = useState<any>({})
-    const [leaveConfirmation, setLeaveConfirmation] = useState<any>({})
-    const [submitStatus, setSubmitStatus] = useState(false)
+    });
+    const [submitStatus, setSubmitStatus] = useState(false);
+    const [dateErrorMessage, setDateErrorMessage] = useState(false);
 
     useEffect(() => {
-        setUserData(getFromStorage('USER_DATA'))
+        setUserData(getFromStorage('USER_DATA'));
+
+        const picker1: any = document.getElementById('date1');
+        picker1.addEventListener('input', (e: any) => {
+            var day = new Date(e.target.value).getUTCDay();
+            if (day == 0 || day == 6) {
+                e.target.value = '';
+                setDateErrorMessage(true);
+                return false;
+            }
+            setDateErrorMessage(false);
+        });
+
+        const picker2: any = document.getElementById('date2');
+        picker2.addEventListener('input', (e: any) => {
+            var day = new Date(e.target.value).getUTCDay();
+            if (day == 0 || day == 6) {
+                e.target.value = '';
+                setDateErrorMessage(true);
+                return false;
+            }
+            setDateErrorMessage(false);
+        });
     }, [])
-
-    useEffect(() => {
-        fetchAttendanceData();
-        fetchLeavesData();
-    }, [userData._id])
-
-    const fetchAttendanceData = async () => {
-        try {
-            const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/getAttendancesById?userId=${userData._id}`, {
-                method: 'GET'
-            });
-            const json = await response.json();
-            setAttendanceConfirmation(json.attendancesData)
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
-
-    const fetchLeavesData = async () => {
-        try {
-            const response = await fetch(`${LOCALHOST_URL}/leaveRequest/getLeavesById?userId=${userData._id}`, {
-                method: 'GET'
-            });
-            const json = await response.json();
-            setLeaveConfirmation(json.leavesData)
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
 
     var yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];
 
@@ -85,12 +77,13 @@ const UserAttendance = () => {
     return (
         <>
             <Navbar />
-            <Calender
-                attendanceData = {attendanceConfirmation}
-                leaveData={leaveConfirmation}
-            />
+            <Calender />
             <div className={styles.attendanceRequests}>Attendance Requests</div>
-
+            {dateErrorMessage &&
+                <div className={styles.dateErrorMessage}>
+                    Weekends are not allowed
+                </div>
+            }
             <form onSubmit={submitDetails} className={styles.attendanceForm}>
                 <div className={styles.attendanceDropdowns}>
                     <div>
@@ -118,13 +111,13 @@ const UserAttendance = () => {
                 </div>
                 <div className={styles.dates}>
                     <label className={styles.inputTexts}>From Date<span className={styles.asterisk}>*</span></label>
-                    <input
+                    <input id='date1'
                         type="date"
                         onChange={(e) => setUserAttendanceData({ ...userAttendanceData, fromDate: convertDateToTimeStamp(e.target.value) })}
                         max={yesterday}
                     />
                     <label className={styles.inputTexts}>To Date<span className={styles.asterisk}>*</span></label>
-                    <input
+                    <input id='date2'
                         type="date"
                         onChange={(e) => setUserAttendanceData({ ...userAttendanceData, toDate: convertDateToTimeStamp(e.target.value) })}
                         max={yesterday}

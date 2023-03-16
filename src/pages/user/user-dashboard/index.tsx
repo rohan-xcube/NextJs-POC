@@ -16,9 +16,9 @@ const UserDashboard = () => {
             width={60}
             height={60}
             onClick={() => Router.push('/user/user-leaves')}
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
           />
-          <p>leave</p>
+          <p className={styles.iconText}>leave</p>
         </div>
         <div>
           <Image
@@ -27,12 +27,11 @@ const UserDashboard = () => {
             width={60}
             height={60}
             onClick={() => Router.push('/user/user-attendances')}
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
           />
-          <p>attendance</p>
+          <p className={styles.iconText}>attendance</p>
         </div>
       </div>
-
     </>
   )
 }

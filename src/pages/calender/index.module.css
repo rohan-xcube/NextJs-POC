@@ -1,9 +1,23 @@
+.status {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+.totalStatus {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 30px;
+}
 
 .wrapper {
     width: 99%;
     height: 100vh;
     border: 1px solid;
     margin: 5px;
+    font-family: sans-serif;
 }
 
 .calenderHead {
@@ -32,14 +46,6 @@
     height: calc(100% - 27px - 40px);
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-}
-
-.caldenderFebBody {
-    height: calc(100% - 27px - 40px);
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(4, 1fr);
 }
 
 .styledDay {
@@ -53,6 +59,15 @@
     text-align: right;
     padding: 5px;
     background-color: orange;
+}
+
+.holidayDates {
+    display: grid;
+    text-align: left;
+    background: grey;
+    color: white;
+    padding: 2px 2px;
+    border-radius: 8px;
 }
 
 .styledEventRejected {

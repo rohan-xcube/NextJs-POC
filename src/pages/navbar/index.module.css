@@ -8,6 +8,15 @@
     background-color: grey;
 }
 
+.navBarLeftList {
+    float: left;
+    margin-left: 20px;
+    font-size: 30px;
+    font-family: sans-serif;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
 .navBarList {
     float: right;
     margin-left: 20px;

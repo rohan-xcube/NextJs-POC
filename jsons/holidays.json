@@ -1,0 +1,49 @@
+{
+    "HOLIDAYS_2023": [
+        {
+            "id": 0,
+            "Occasion": "Republic Day",
+            "Date": "Thu Jan 26 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 1,
+            "Occasion": "Good Friday",
+            "Date": "Fri Apr 7 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 2,
+            "Occasion": "Telangana Formation Day",
+            "Date": "Fri Jun 2 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 3,
+            "Occasion": "Bakrid",
+            "Date": "Thu Jun 29 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 4,
+            "Occasion": "Independence Day",
+            "Date": "Tue Aug 15 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 5,
+            "Occasion": "Ganesh Chaturthi",
+            "Date": "Mon Sep 18 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 6,
+            "Occasion": "Gandhi Jayanthi",
+            "Date": "Mon Oct 2 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 7,
+            "Occasion": "Vijaya Dashami",
+            "Date": "Tue Oct 24 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        },
+        {
+            "id": 8,
+            "Occasion": "Christmas",
+            "Date": "Mon Dec 25 2023 00:00:00 GMT+0530 (India Standard Time)" 
+        }
+    ]
+}

@@ -18,7 +18,7 @@ const AdminDashboard = () => {
             onClick={() => Router.push('/admin/admin-leaves')}
             style={{cursor: 'pointer'}}
           />
-          <p>leave</p>
+          <p className={styles.iconText}>leave</p>
         </div>
         <div>
           <Image
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
             onClick={() => Router.push('/admin/admin-attendances')}
             style={{cursor: 'pointer'}}
           />
-          <p>attendance</p>
+          <p className={styles.iconText}>attendance</p>
         </div>
       </div>
 
