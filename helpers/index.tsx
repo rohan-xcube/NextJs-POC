@@ -1,6 +1,6 @@
 import { getFromStorage } from '@/utils'
 import { useRouter } from 'next/router'
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const AuthProvider:React.FC<any> = (props) => {
  const router = useRouter()

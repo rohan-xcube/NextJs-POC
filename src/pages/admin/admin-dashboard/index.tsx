@@ -31,6 +31,17 @@ const AdminDashboard = () => {
           />
           <p className={styles.iconText}>attendance</p>
         </div>
+        <div>
+          <Image
+            src="/input.png"
+            alt='holidays'
+            width={60}
+            height={60}
+            onClick={() => Router.push('/admin/admin-holidays-input')}
+            style={{cursor: 'pointer'}}
+          />
+          <p className={styles.iconText}>Enter Holidays</p>
+        </div>
       </div>
 
     </>

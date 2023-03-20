@@ -24,6 +24,10 @@ const Calender = () => {
         fetchLeavesData();
     }, [userData._id, MONTHS[currentMonth], currentYear]);
 
+    // useEffect(() => {
+    //     fetchHolidaysData();
+    // }, [currentYear]);
+
     const fetchAttendanceData = async () => {
         try {
             const response = await fetch(`${LOCALHOST_URL}/attendanceRequest/getAttendancesById?userId=${userData._id}&month=${MONTHS[currentMonth]}&year=${currentYear}`, {
@@ -47,6 +51,18 @@ const Calender = () => {
             console.log("error", error);
         }
     };
+
+    // const fetchHolidaysData = async () => {
+    //     try {
+    //         const response = await fetch(`${LOCALHOST_URL}/holidaysRequest/getHolidaysByYear?year=${currentYear}`, {
+    //             method: 'GET'
+    //         });
+    //         const json = await response.json();
+    //         setLeaveConfirmation(json.leavesDataPerMonth)
+    //     } catch (error) {
+    //         console.log("error", error);
+    //     }
+    // };
 
     const prevMonth = () => {
         if (currentMonth > 0) {
@@ -101,10 +117,15 @@ const Calender = () => {
                 temp1.push(range);
             })
         }
+        // Thu Jan 26 2023 00:00:00 GMT+0530 (India Standard Time) json object
+        // Wed, 05 Apr 2023 00:00:00 GMT filtered data
+        // ( Holidays.HOLIDAYS_2023.map((item: any) => console.log(item.Date)), 'holidays')
         let dateData = Array.prototype.concat.apply([], temp1);
         dateData.filter((item3: any) => !(item3).toLowerCase().includes('sat'))
             .filter((item4: any) => !(item4).toLowerCase().includes('sun'))
-            .filter((item5: any) => (item5).toLowerCase().includes(MONTHS[currentMonth].toLowerCase()))?.map((item6: any) => {
+            .filter((item5: any) => (item5).toLowerCase().includes(MONTHS[currentMonth].toLowerCase()))
+            // .filter((item6:any) => console.log(item6))
+            ?.map((item6: any) => {
                 let date = new Date(item6);
                 let dd = date.getDate();
                 let mm = date.getMonth();
@@ -173,7 +194,7 @@ const Calender = () => {
             const total = arr1.reduce((acc: any, c: any) => acc + c, 0);
             avgTimeInSeconds = total / arr1.length;
             let d = Number(avgTimeInSeconds);
-            if (d <= 0) {
+            if (d <= 0 || total <= 0) {
                 return '00:00:00';
             } else {
                 let h = Math.floor(d / 3600);
@@ -253,8 +274,20 @@ const Calender = () => {
         }
     }
 
+    const isHolidayInCurrentMonth = (): number => {
+        let countOfHolidays = 0;
+        Holidays.HOLIDAYS_2023?.map((ev: any) => {
+            let holidayDates = new Date(ev.Date);
+            if ((convertTimeStampToString(holidayDates).toLowerCase().includes(MONTHS[currentMonth].toLowerCase()))) {
+                countOfHolidays = countOfHolidays + 1;
+            }
+        })
+        return countOfHolidays;
+    }
+
     const avgLeaveDays = (): number => {
-        return workingDaysOfSelectedMonth() - getCountOfAttendances().countOfAcceptedAttendances - workingDaysOfRemaningDays();
+        return workingDaysOfSelectedMonth() - getCountOfAttendances().countOfAcceptedAttendances 
+        - workingDaysOfRemaningDays() - isHolidayInCurrentMonth();
     }
 
     const avgPresentDays = (): number => {
